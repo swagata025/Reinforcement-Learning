@@ -1,10 +1,23 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import datetime
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(SCRIPT_DIR, "data")
 
-def plot_learning_curve(rewards_file=os.path.join(SCRIPT_DIR, "data", "rewards_history.npy")):
+# -----------------------------------------------------------------
+# CONFIGURATION
+# -----------------------------------------------------------------
+# To plot a specific training session, change this filename.
+# Example: "rewards_history_21-01-26_14-35-00.npy"
+# Default: "rewards_history.npy" (This is always the most recent run)
+REWARDS_FILENAME = "rewards_history.npy"
+# -----------------------------------------------------------------
+
+REWARDS_PATH = os.path.join(DATA_DIR, REWARDS_FILENAME)
+
+def plot_learning_curve(rewards_file=REWARDS_PATH):
     if not os.path.exists(rewards_file):
         print(f"File {rewards_file} not found. Run training first.")
         return
@@ -28,8 +41,11 @@ def plot_learning_curve(rewards_file=os.path.join(SCRIPT_DIR, "data", "rewards_h
     plt.legend()
     plt.grid(True)
     
-    plt.savefig(os.path.join(SCRIPT_DIR, "plots", "learning_curve.png"))
-    print("Plot saved as learning_curve.png")
+    # Timestamp format: DD-MM-YY_HH-MM-SS (Safe for Windows filenames)
+    timestamp = datetime.datetime.now().strftime("%d-%m-%y_%H-%M-%S")
+    plot_filename = f"learning_curve_{timestamp}.png"
+    plt.savefig(os.path.join(SCRIPT_DIR, "plots", plot_filename))
+    print(f"Plot saved as {plot_filename}")
     plt.show()
 
 if __name__ == "__main__":

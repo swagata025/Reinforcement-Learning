@@ -2,16 +2,17 @@ import gymnasium as gym
 import numpy as np
 import pickle
 import os
+import datetime
 from state_discretizer import StateDiscretizer
 import matplotlib.pyplot as plt
 
 # Hyperparameters
-LEARNING_RATE = 0.15      # Slightly increased to learn faster from good events
+LEARNING_RATE = 0.1       # Lower learning rate for more stability over long training
 DISCOUNT_FACTOR = 0.99
 EPSILON_START = 1.0
-EPSILON_DECAY = 0.998     # Slower decay to explore the new state space thoroughly
-EPSILON_MIN = 0.02        # Keep a bit more randomness
-EPISODES = 12000           # Give it enough time to converge
+EPSILON_DECAY = 0.9996    # Very slow decay: Explores for ~10,000 episodes
+EPSILON_MIN = 0.01        # Allow almost full exploitation at the end
+EPISODES = 15000          # Long training session
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SAVE_PATH = os.path.join(SCRIPT_DIR, "models", "q_table.pkl")
 
@@ -86,12 +87,28 @@ def train_agent():
             print(f"Episode: {episode + 1}, Avg Reward (last 100): {avg_reward:.2f}, Epsilon: {epsilon:.4f}")
 
     # Save Agent
+    # Timestamp format: DD-MM-YY_HH-MM-SS (Safe for Windows filenames)
+    timestamp = datetime.datetime.now().strftime("%d-%m-%y_%H-%M-%S")
+    
+    # Save timestamped model
+    model_filename = f"q_table_{timestamp}.pkl"
+    save_path_timestamp = os.path.join(SCRIPT_DIR, "models", model_filename)
+    with open(save_path_timestamp, "wb") as f:
+        pickle.dump(q_table, f)
+        
+    # Overwrite default for convenience
     with open(SAVE_PATH, "wb") as f:
         pickle.dump(q_table, f)
-    print(f"Q-table saved to {SAVE_PATH}")
+    print(f"Q-table saved to {save_path_timestamp} (and updated {SAVE_PATH})")
     
     # Save Metrics for Visualization
+    rewards_filename = f"rewards_history_{timestamp}.npy"
+    rewards_path_timestamp = os.path.join(SCRIPT_DIR, "data", rewards_filename)
+    np.save(rewards_path_timestamp, np.array(rewards_history))
+    
+    # Overwrite default
     np.save(os.path.join(SCRIPT_DIR, "data", "rewards_history.npy"), np.array(rewards_history))
+    print(f"Rewards history saved to {rewards_path_timestamp}")
     
     return q_table, rewards_history
 

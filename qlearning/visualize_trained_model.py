@@ -6,7 +6,18 @@ from state_discretizer import StateDiscretizer
 
 # Path to the trained model
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(SCRIPT_DIR, "models", "q_table.pkl")
+MODELS_DIR = os.path.join(SCRIPT_DIR, "models")
+
+# -----------------------------------------------------------------
+# CONFIGURATION
+# -----------------------------------------------------------------
+# To load a specific training session, change this filename.
+# Example: "q_table_21-01-26_14-35-00.pkl"
+# Default: "q_table.pkl" (This is always the most recently trained agent)
+MODEL_FILENAME = "q_table.pkl" 
+# -----------------------------------------------------------------
+
+MODEL_PATH = os.path.join(MODELS_DIR, MODEL_FILENAME)
 
 def visualize_trained_agent(episodes=5):
     """
