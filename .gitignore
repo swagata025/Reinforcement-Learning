@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Environment variables
+.env
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# VS Code
+.vscode/
+
+# Project specific
+*.pkl
+*.npy
+*.png
