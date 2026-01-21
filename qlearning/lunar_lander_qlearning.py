@@ -4,6 +4,7 @@ import pickle
 import os
 import datetime
 from state_discretizer import StateDiscretizer
+from visualization import plot_learning_curve
 import matplotlib.pyplot as plt
 
 # Hyperparameters
@@ -110,42 +111,14 @@ def train_agent():
     np.save(os.path.join(SCRIPT_DIR, "data", "rewards_history.npy"), np.array(rewards_history))
     print(f"Rewards history saved to {rewards_path_timestamp}")
     
+    # Auto-generate plot
+    print("Generating learning curve...")
+    try:
+        plot_learning_curve(rewards_file=rewards_path_timestamp, timestamp=timestamp, show_plot=False)
+    except Exception as e:
+        print(f"Could not generate plot automatically: {e}")
+
     return q_table, rewards_history
 
-def test_agent(episodes=5):
-    if not os.path.exists(SAVE_PATH):
-        print("No trained agent found. Run training first.")
-        return
-
-    with open(SAVE_PATH, "rb") as f:
-        q_table = pickle.load(f)
-
-    # Render mode for testing
-    env = gym.make("LunarLander-v3", render_mode="human")
-    discretizer = StateDiscretizer(env)
-    
-    print("\nTesting Trained Agent...")
-    
-    for ep in range(episodes):
-        state, info = env.reset()
-        discrete_state = discretizer.discretize(state)
-        terminated = False
-        truncated = False
-        total_reward = 0
-        
-        while not (terminated or truncated):
-            action = np.argmax(q_table[discrete_state])
-            next_state, reward, terminated, truncated, info = env.step(action)
-            discrete_state = discretizer.discretize(next_state)
-            total_reward += reward
-            
-        print(f"Test Episode {ep + 1}: Total Reward: {total_reward:.2f}")
-    
-    env.close()
-
 if __name__ == "__main__":
-    # You can toggle these
-    # Train
     train_agent()
-    # Test
-    # test_agent()

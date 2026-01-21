@@ -19,7 +19,7 @@ MODEL_FILENAME = "q_table.pkl"
 
 MODEL_PATH = os.path.join(MODELS_DIR, MODEL_FILENAME)
 
-def visualize_trained_agent(episodes=5):
+def test_model(episodes=5):
     """
     Loads the trained Q-table and runs the agent in human render mode
     to visualize how well it plays the game.
@@ -70,4 +70,4 @@ def visualize_trained_agent(episodes=5):
     print("Visualization complete.")
 
 if __name__ == "__main__":
-    visualize_trained_agent(episodes=5)
+    test_model(episodes=5)

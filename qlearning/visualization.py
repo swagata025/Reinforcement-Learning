@@ -17,7 +17,7 @@ REWARDS_FILENAME = "rewards_history.npy"
 
 REWARDS_PATH = os.path.join(DATA_DIR, REWARDS_FILENAME)
 
-def plot_learning_curve(rewards_file=REWARDS_PATH):
+def plot_learning_curve(rewards_file=REWARDS_PATH, save_dir=None, timestamp=None, show_plot=True):
     if not os.path.exists(rewards_file):
         print(f"File {rewards_file} not found. Run training first.")
         return
@@ -41,12 +41,25 @@ def plot_learning_curve(rewards_file=REWARDS_PATH):
     plt.legend()
     plt.grid(True)
     
-    # Timestamp format: DD-MM-YY_HH-MM-SS (Safe for Windows filenames)
-    timestamp = datetime.datetime.now().strftime("%d-%m-%y_%H-%M-%S")
+    # Generate timestamp if not provided
+    if timestamp is None:
+        # Timestamp format: DD-MM-YY_HH-MM-SS (Safe for Windows filenames)
+        timestamp = datetime.datetime.now().strftime("%d-%m-%y_%H-%M-%S")
+    
     plot_filename = f"learning_curve_{timestamp}.png"
-    plt.savefig(os.path.join(SCRIPT_DIR, "plots", plot_filename))
+    
+    # Use default output dir if not provided
+    if save_dir is None:
+        save_dir = os.path.join(SCRIPT_DIR, "plots")
+        
+    output_path = os.path.join(save_dir, plot_filename)
+    plt.savefig(output_path)
     print(f"Plot saved as {plot_filename}")
-    plt.show()
+    
+    if show_plot:
+        plt.show()    
+    else:
+        plt.close() # Close figure to free memory if not showing
 
 if __name__ == "__main__":
     plot_learning_curve()

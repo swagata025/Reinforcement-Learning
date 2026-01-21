@@ -1,6 +1,6 @@
 import gymnasium as gym
 
-def visualize_random_agent(episodes=5):
+def test_untrained_model(episodes=5):
     # Create environment with human rendering enabled
     env = gym.make("LunarLander-v3", render_mode="human")
     
@@ -28,4 +28,4 @@ def visualize_random_agent(episodes=5):
     env.close()
 
 if __name__ == "__main__":
-    visualize_random_agent()
+    test_untrained_model()
