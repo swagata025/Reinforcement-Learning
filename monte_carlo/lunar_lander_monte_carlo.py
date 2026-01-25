@@ -19,7 +19,7 @@ EPSILON_START = 1.0
 EPSILON_DECAY = 0.99985 # Slower decay for longer training
 EPSILON_MIN = 0.01
 EPISODES = 50000       # Significantly more episodes for convergence
-MC_ALPHA = 0.01
+MC_ALPHA = 0.01        # Base learning rate (unused if using sample average)
 EVERY_VISIT = True
 SHAPING_ANGLE = 0.3
 SHAPING_VEL = 0.3      # Increased velocity penalty
@@ -67,6 +67,8 @@ def train_agent():
 
     print("Starting Monte Carlo Training...")
 
+    best_avg_reward = -float('inf')
+
     for episode in range(EPISODES):
         state, info = env.reset()
         discrete_state = discretizer.discretize(state)
@@ -110,7 +112,12 @@ def train_agent():
                 if not EVERY_VISIT:
                     visited.add(sa_key)
                 returns_count[state_t][action_t] += 1
-                q_table[state_t][action_t] += MC_ALPHA * (G - q_table[state_t][action_t])
+                
+                # Sample Average Update (True Monte Carlo)
+                # Alpha is effectively 1/N
+                N = returns_count[state_t][action_t]
+                alpha = 1.0 / N
+                q_table[state_t][action_t] += alpha * (G - q_table[state_t][action_t])
 
         epsilon = max(EPSILON_MIN, epsilon * EPSILON_DECAY)
 
@@ -120,6 +127,13 @@ def train_agent():
                 f"Episode: {episode + 1}, Avg Reward (last 100): {avg_reward:.2f}, "
                 f"Epsilon: {epsilon:.4f}"
             )
+            
+            # Save Best Model Logic
+            if avg_reward > best_avg_reward:
+                best_avg_reward = avg_reward
+                with open(SAVE_PATH, "wb") as f:
+                    pickle.dump(q_table, f)
+                print(f"  > New Best Average Reward! Model saved to {SAVE_PATH}")
 
     # Save Agent
     timestamp = datetime.datetime.now().strftime("%d-%m-%y_%H-%M-%S")

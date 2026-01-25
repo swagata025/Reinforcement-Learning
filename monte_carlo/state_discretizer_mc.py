@@ -5,7 +5,7 @@ class StateDiscretizerMC:
         self.env = env
         
         # "Smart Coarse" binning strategy
-        # Reduces state space size to ~13k states (vs ~80k previously)
+        # Reduces state space size to ~13k states
         # Emphasizes Velocity and Angle over Position for better generalization
         self.bins = [
             # 1. Position X: [-1.5, 1.5] - Coarse (Left, Center, Right)
