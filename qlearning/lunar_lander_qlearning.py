@@ -8,7 +8,8 @@ from visualization import plot_learning_curve
 import matplotlib.pyplot as plt
 
 # Hyperparameters
-LEARNING_RATE = 0.1       # Lower learning rate for more stability over long training
+LEARNING_RATE = 0.1
+# Lower learning rate for more stability over long training
 DISCOUNT_FACTOR = 0.99
 EPSILON_START = 1.0
 EPSILON_DECAY = 0.9996    # Very slow decay: Explores for ~10,000 episodes
@@ -19,7 +20,7 @@ SAVE_PATH = os.path.join(SCRIPT_DIR, "models", "q_table.pkl")
 
 def train_agent():
     # Create Environment
-    env = gym.make("LunarLander-v3")
+    env = gym.make("LunarLander-v3", max_episode_steps=800)
     
     # Initialize Discretizer
     discretizer = StateDiscretizer(env)

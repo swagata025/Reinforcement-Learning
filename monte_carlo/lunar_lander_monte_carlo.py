@@ -44,7 +44,7 @@ def train_agent():
     os.makedirs(DATA_DIR, exist_ok=True)
     os.makedirs(PLOTS_DIR, exist_ok=True)
 
-    env = gym.make("LunarLander-v3")
+    env = gym.make("LunarLander-v3", max_episode_steps=800)
     discretizer = StateDiscretizerMC(env)
 
     state_shape = discretizer.get_state_space_shape()
@@ -173,7 +173,7 @@ def test_agent(episodes=5):
     with open(SAVE_PATH, "rb") as f:
         q_table = pickle.load(f)
 
-    env = gym.make("LunarLander-v3", render_mode="human")
+    env = gym.make("LunarLander-v3", render_mode="human", max_episode_steps=800)
     discretizer = StateDiscretizerMC(env)
 
     print("\nTesting Trained Agent...")

@@ -34,7 +34,7 @@ def test_model(episodes=5):
         q_table = pickle.load(f)
 
     # Create environment with render_mode="human" so we can see it
-    env = gym.make("LunarLander-v3", render_mode="human")
+    env = gym.make("LunarLander-v3", render_mode="human", max_episode_steps=800)
     
     # Initialize Discretizer
     discretizer = StateDiscretizer(env)

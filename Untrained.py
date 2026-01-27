@@ -2,7 +2,7 @@ import gymnasium as gym
 
 def test_untrained_model(episodes=5):
     # Create environment with human rendering enabled
-    env = gym.make("LunarLander-v3", render_mode="human")
+    env = gym.make("LunarLander-v3", render_mode="human", max_episode_steps=800)
     
     print(f"Visualizing {episodes} episodes with a random agent...")
     print("Close the window to stop early.")
