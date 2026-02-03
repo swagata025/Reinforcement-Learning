@@ -7,20 +7,23 @@ from state_discretizer import StateDiscretizer
 from visualization import plot_learning_curve
 import matplotlib.pyplot as plt
 
+# ...existing code
 # Hyperparameters
-LEARNING_RATE = 0.1
-# Lower learning rate for more stability over long training
+LEARNING_RATE_START = 0.1 # Starting LR
+LEARNING_RATE_MIN = 0.01  # Minimum LR
+LEARNING_RATE_DECAY = 0.9997 # Faster decay for shorter episodes
 DISCOUNT_FACTOR = 0.99
 EPSILON_START = 1.0
-EPSILON_DECAY = 0.9996    # Very slow decay: Explores for ~10,000 episodes
+EPSILON_DECAY = 0.9996    # Standard decay for 12,000 episodes
 EPSILON_MIN = 0.01        # Allow almost full exploitation at the end
-EPISODES = 15000          # Long training session
+EPISODES = 12000          # Standard training session
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SAVE_PATH = os.path.join(SCRIPT_DIR, "models", "q_table.pkl")
+# ...existing code...
 
 def train_agent():
     # Create Environment
-    env = gym.make("LunarLander-v3", max_episode_steps=800)
+    env = gym.make("LunarLander-v3")
     
     # Initialize Discretizer
     discretizer = StateDiscretizer(env)
@@ -46,6 +49,7 @@ def train_agent():
     # Training Metrics
     rewards_history = []
     epsilon = EPSILON_START
+    learning_rate = LEARNING_RATE_START
     
     print("Starting Training...")
     
@@ -73,7 +77,7 @@ def train_agent():
             td_target = reward + DISCOUNT_FACTOR * q_table[next_discrete_state][best_next_action]
             td_error = td_target - q_table[discrete_state][action]
             
-            q_table[discrete_state][action] += LEARNING_RATE * td_error
+            q_table[discrete_state][action] += learning_rate * td_error
             
             # Update state
             discrete_state = next_discrete_state
@@ -81,12 +85,15 @@ def train_agent():
             
         # Decay Epsilon
         epsilon = max(EPSILON_MIN, epsilon * EPSILON_DECAY)
+
+        # Decay Learning Rate
+        learning_rate = max(LEARNING_RATE_MIN, learning_rate * LEARNING_RATE_DECAY)
         
         rewards_history.append(total_reward)
         
         if (episode + 1) % 100 == 0:
             avg_reward = np.mean(rewards_history[-100:])
-            print(f"Episode: {episode + 1}, Avg Reward (last 100): {avg_reward:.2f}, Epsilon: {epsilon:.4f}")
+            print(f"Episode: {episode + 1}, Avg Reward (last 100): {avg_reward:.2f}, Epsilon: {epsilon:.4f}, LR: {learning_rate:.4f}")
 
     # Save Agent
     # Timestamp format: DD-MM-YY_HH-MM-SS (Safe for Windows filenames)

@@ -16,9 +16,9 @@ from monte_carlo.state_discretizer_mc import StateDiscretizerMC
 # Hyperparameters
 DISCOUNT_FACTOR = 0.99
 EPSILON_START = 1.0
-EPSILON_DECAY = 0.99985 # Slower decay for longer training
+EPSILON_DECAY = 0.9995   # Faster decay for fewer episodes
 EPSILON_MIN = 0.01
-EPISODES = 50000       # Significantly more episodes for convergence
+EPISODES = 12000       # 12000 Episodes as requested
 MC_ALPHA = 0.01        # Base learning rate (unused if using sample average)
 EVERY_VISIT = True
 SHAPING_ANGLE = 0.3
@@ -44,7 +44,7 @@ def train_agent():
     os.makedirs(DATA_DIR, exist_ok=True)
     os.makedirs(PLOTS_DIR, exist_ok=True)
 
-    env = gym.make("LunarLander-v3", max_episode_steps=800)
+    env = gym.make("LunarLander-v3")
     discretizer = StateDiscretizerMC(env)
 
     state_shape = discretizer.get_state_space_shape()
@@ -173,7 +173,7 @@ def test_agent(episodes=5):
     with open(SAVE_PATH, "rb") as f:
         q_table = pickle.load(f)
 
-    env = gym.make("LunarLander-v3", render_mode="human", max_episode_steps=800)
+    env = gym.make("LunarLander-v3", render_mode="human")
     discretizer = StateDiscretizerMC(env)
 
     print("\nTesting Trained Agent...")
