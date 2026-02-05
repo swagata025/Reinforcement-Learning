@@ -2,13 +2,15 @@ import numpy as np
 import random
 import pickle
 class QLearningAgent:
-    def __init__(self, discretizer, action_size, learning_rate=0.12, discount_factor=0.99, epsilon=1.0, epsilon_decay=0.995):
+    def __init__(self, discretizer, action_size, learning_rate=0.10, discount_factor=0.99, epsilon=1.0, epsilon_decay=0.995):
         self.discretizer = discretizer
         self.action_size = action_size
         self.lr = learning_rate
         self.gamma = discount_factor
         self.epsilon = epsilon
         self.epsilon_decay = epsilon_decay
+        self.min_lr = 0.01 
+        self.lr_decay = 0.9999
         
         # Initialize Q-Table with zeros
         # Shape: (dim1, dim2, ..., dim8, action_size)
@@ -34,6 +36,7 @@ class QLearningAgent:
         # Decay epsilon
         if done:
             self.epsilon = max(0.01, self.epsilon * self.epsilon_decay)
+            if self.epsilon < 0.15: self.lr = max(self.min_lr, self.lr * self.lr_decay)
     
     def save(self, filename="q-table.pkl"):
         """Saves the Q-table to a file."""

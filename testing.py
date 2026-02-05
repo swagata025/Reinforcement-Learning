@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 from discretize import *
 # 1. Load your Q-table
-with open("q-table.pkl", "rb") as f:
+with open("q-table-2026-02-03_17-24-49", "rb") as f:
     q_table = pickle.load(f)
 
 # 2. Setup the environment for visualization
