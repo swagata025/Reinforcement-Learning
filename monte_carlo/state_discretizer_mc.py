@@ -4,28 +4,39 @@ class StateDiscretizerMC:
     def __init__(self, env):
         self.env = env
         
-        # "Smart Coarse" binning strategy
-        # Reduces state space size to ~13k states
-        # Emphasizes Velocity and Angle over Position for better generalization
+        # Refined Binning Strategy for Monte Carlo
+        # Aim: Reduce total state space while maintaining precision where it matters (Lander Center & Stability)
+        
         self.bins = [
-            # 1. Position X: [-1.5, 1.5] - Coarse (Left, Center, Right)
-            np.array([-0.3, 0.3]), 
+            # 1. Position X: [-1.5, 1.5]
+            # Focus on precise centering. Target is 0.0
+            # Bins: Far Left, Left Approach, On Target (Left), On Target (Right), Right Approach, Far Right
+            np.array([-0.5, -0.1, 0.0, 0.1, 0.5]), 
 
-            # 2. Position Y: [0, 1.5] - Coarse (Low, Mid, High)
-            np.array([0.3, 0.6]),
+            # 2. Position Y: [0, 1.5]
+            # Focus on proximity to ground.
+            # Bins: Ground/Landed (<0.1), Final Approach (0.1-0.3), Descent (0.3-0.6), High
+            np.array([0.1, 0.3, 0.6]),
 
-            # 3. Velocity X: [-5, 5] - Important for stability
-            np.array([-0.4, -0.1, 0.1, 0.4]),
+            # 3. Velocity X: [-5, 5]
+            # Needs to be stable near 0.
+            # Bins: Moving Left, Stable (-0.15 to 0.15), Moving Right
+            np.array([-0.2, 0.2]),
 
-            # 4. Velocity Y: [-5, 5] - Critical for landing
-            # Breaks down into: Fast Descent, Controlled Descent, Hover, Rise
-            np.array([-0.9, -0.5, -0.2, 0.2]),
+            # 4. Velocity Y: [-5, 5]
+            # Key for survival.
+            # Bins: Crash (< -0.8), Apply Engines (< -0.4), Safe Descent (< -0.05), Hover/Rise (>= -0.05)
+            # Note: -0.05 is chosen to capture very slow descent/hovering.
+            np.array([-1.0, -0.5, 0.0]),
 
-            # 5. Angle: [-3.14, 3.14] - Critical for staying upright
+            # 5. Angle: [-3.14, 3.14]
+            # Stability is paramount.
+            # Bins: Danger Left, Tilt Left, Stable, Tilt Right, Danger Right
             np.array([-0.2, -0.05, 0.05, 0.2]),
 
-            # 6. Angular Velocity: [-5, 5] - Coarse
-            np.array([-0.2, 0.2]),
+            # 6. Angular Velocity: [-5, 5]
+            # Just separate spinning from stable.
+            np.array([-0.15, 0.15]),
 
             # 7. Left leg contact
             np.array([0.5]),

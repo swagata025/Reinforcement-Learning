@@ -16,15 +16,15 @@ from monte_carlo.state_discretizer_mc import StateDiscretizerMC
 # Hyperparameters
 DISCOUNT_FACTOR = 0.99
 EPSILON_START = 1.0
-EPSILON_DECAY = 0.9995   # Faster decay for fewer episodes
+EPSILON_DECAY = 0.9995 
 EPSILON_MIN = 0.01
-EPISODES = 12000       # 12000 Episodes as requested
-MC_ALPHA = 0.01        # Base learning rate (unused if using sample average)
+EPISODES = 25000       
+MC_ALPHA = 0.02        # Reduced for stability
 EVERY_VISIT = True
-SHAPING_ANGLE = 0.3
-SHAPING_VEL = 0.3      # Increased velocity penalty
-SHAPING_DIST = 1.0     # Stronger centering penalty
-SHAPING_LEG_BONUS = 0.2
+SHAPING_ANGLE = 0.2    # Increased to prioritize stability
+SHAPING_VEL = 0.2      # Increased to prioritize slowing down
+SHAPING_DIST = 0.5     # Reduced
+SHAPING_LEG_BONUS = 0.0 # Removed to prevent hover-hack. Gym gives +10 per leg already.
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 MODELS_DIR = os.path.join(SCRIPT_DIR, "models")
@@ -54,10 +54,12 @@ def train_agent():
     print(f"Action Space Size: {action_size}")
 
     try:
-        # Optimistic Initialization to encourage exploration
-        q_table = np.full(state_shape + (action_size,), 50.0)
+        # Changed Intialization: 50.0 was likely too optimistic, causing the agent
+        # to spend too much time verifying that "bad" states are indeed bad.
+        # 10.0 is still optimistic (max reward ~200-300) but less extreme.
+        q_table = np.full(state_shape + (action_size,), 10.0)
         returns_count = np.zeros(state_shape + (action_size,))
-        print("Q-table initialized successfully with optimistic values.")
+        print("Q-table initialized successfully with moderately optimistic values (10.0).")
     except MemoryError:
         print("State space too large for array, check binning strategy.")
         return
@@ -111,13 +113,13 @@ def train_agent():
             if EVERY_VISIT or sa_key not in visited:
                 if not EVERY_VISIT:
                     visited.add(sa_key)
-                returns_count[state_t][action_t] += 1
+                # returns_count is not needed for constant alpha
+                # returns_count[state_t][action_t] += 1
                 
-                # Sample Average Update (True Monte Carlo)
-                # Alpha is effectively 1/N
-                N = returns_count[state_t][action_t]
-                alpha = 1.0 / N
-                q_table[state_t][action_t] += alpha * (G - q_table[state_t][action_t])
+                # Constant Alpha Update
+                # This treats the problem as slightly non-stationary or simply gives
+                # more weight to recent experience (which comes from a better policy)
+                q_table[state_t][action_t] += MC_ALPHA * (G - q_table[state_t][action_t])
 
         epsilon = max(EPSILON_MIN, epsilon * EPSILON_DECAY)
 
