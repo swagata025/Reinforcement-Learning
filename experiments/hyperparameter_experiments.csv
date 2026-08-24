@@ -1,0 +1,8 @@
+trial_id,algorithm,learning_rate,gamma,epsilon_decay,buffer_size,target_update_freq,episodes,max_reward,final_100_avg,status,discretization_bins,percentile,n_sessions,sigma_decay
+EXP-DQN-01,DQN,0.0005,0.99,0.996,200000.0,15.0,2000,318.4,231.2,SOLVED,,,,
+EXP-DQN-02,DQN,0.001,0.99,0.99,100000.0,10.0,2000,274.5,182.4,CONVERGED,,,,
+EXP-DQN-03,DQN,0.0001,0.95,0.999,50000.0,25.0,2000,142.1,45.8,UNDERFIT,,,,
+EXP-QL-01,Q-Learning,0.1,0.99,0.9995,,,12000,301.7,144.1,TRAINED,10.0,,,
+EXP-QL-02,Q-Learning,0.01,0.9,0.999,,,12000,185.3,52.4,COARSE_BINNING,6.0,,,
+EXP-SARSA-01,SARSA,0.1,0.99,0.9995,,,15000,320.6,140.2,TRAINED,10.0,,,
+EXP-CEM-01,CEM,0.5,,,,,20000,-79.0,-106.6,LINEAR_LIMIT,,70.0,100.0,0.99

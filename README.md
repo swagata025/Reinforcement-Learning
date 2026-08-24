@@ -148,5 +148,36 @@ python main.py --algo dqn --mode train
 
 ---
 
+## 🌐 Interactive Web Demo (Streamlit)
+Launch the interactive web dashboard to test agents, adjust environment physics (gravity, wind, turbulence), and compare model metrics in your browser:
+```bash
+streamlit run app.py
+```
+*Access the dashboard at `http://localhost:8501`.*
+
+---
+
+## 🧪 Hyperparameter Experiment Tracker
+Run standard hyperparameter sensitivity grid trials across learning rates ($\alpha$), discount factors ($\gamma$), and buffer sizes ($N$):
+```bash
+python hyperparameter_tracker.py
+```
+*Generates `experiments/hyperparameter_experiments.csv`, `experiments/hyperparameter_summary.json`, and `plots/hyperparameter_sensitivity.png`.*
+
+---
+
+## 🐳 Docker Deployment
+Containerize and execute the full environment without installing local dependencies or SWIG build tools:
+
+```bash
+# Build Docker image
+docker build -t lunar-lander-rl .
+
+# Run benchmark report in container
+docker run --rm lunar-lander-rl
+```
+
+---
+
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
