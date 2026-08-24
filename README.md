@@ -11,7 +11,7 @@ This repository evaluates tabular methods, direct policy search, and deep functi
 
 ---
 
-## 🚀 Key Highlights & Architectural Features
+## Key Highlights & Architectural Features
 
 - **5 Implemented RL Paradigms**:
   1. **Tabular Q-Learning**: Off-policy Temporal Difference (TD) learning with state space discretization.
@@ -25,20 +25,20 @@ This repository evaluates tabular methods, direct policy search, and deep functi
 
 ---
 
-## 📊 Empirical Benchmark Results
+## Empirical Benchmark Results
 
 Each algorithm was trained and evaluated on `LunarLander` under standard environment rewards ($+100$ for landing in goal zone, $-100$ for crashing, fuel consumption penalization). The environment is officially **SOLVED** when achieving a moving average reward of $\ge 200.0$ over 100 consecutive episodes.
 
 | Algorithm | Method Type | Total Episodes / Iterations | Peak Reward | Final 100-Ep Moving Avg | Status |
 | :--- | :--- | :---: | :---: | :---: | :---: |
-| **Deep Q-Network (DQN)** | Deep Function Approximation | 2,000 | **318.4** | **231.2** | 🟢 **SOLVED** |
-| **Tabular Q-Learning** | Off-Policy TD ($\text{TD}(0)$) | 12,000 | 301.7 | 144.1 | 🟡 Trained |
-| **SARSA** | On-Policy TD ($\text{TD}(0)$) | 15,000 | 320.6 | 140.2 | 🟡 Trained |
-| **Monte Carlo Control** | Episodic MC Policy Iteration | 25,000 | 291.5 | -16.4 | 🟠 High Variance |
-| **Cross-Entropy Method** | Evolutionary Policy Search | 200 Generations | -79.0 | -106.6 | 🔴 Linear Limit |
-| **Untrained Agent** | Uniform Random Policy | N/A | -120.4 | -210.5 | 🔴 Baseline |
+| **Deep Q-Network (DQN)** | Deep Function Approximation | 2,000 | **318.4** | **231.2** | **SOLVED** |
+| **Tabular Q-Learning** | Off-Policy TD ($\text{TD}(0)$) | 12,000 | 301.7 | 144.1 | Trained |
+| **SARSA** | On-Policy TD ($\text{TD}(0)$) | 15,000 | 320.6 | 140.2 | Trained |
+| **Monte Carlo Control** | Episodic MC Policy Iteration | 25,000 | 291.5 | -16.4 | High Variance |
+| **Cross-Entropy Method** | Evolutionary Policy Search | 200 Generations | -79.0 | -106.6 | Linear Limit |
+| **Untrained Agent** | Uniform Random Policy | N/A | -120.4 | -210.5 | Baseline |
 
-### 📈 Learning Curves & Comparative Performance
+### Learning Curves & Comparative Performance
 
 ![Algorithm Benchmark Comparison](plots/algorithm_comparison.png)
 
@@ -49,7 +49,7 @@ Each algorithm was trained and evaluated on `LunarLander` under standard environ
 
 ---
 
-## 🧠 Theoretical & Algorithm Deep Dive
+## Theoretical & Algorithm Deep Dive
 
 ### 1. State Discretization (Binning Strategy)
 `LunarLander-v2/v3` provides an 8-dimensional continuous state space:
@@ -75,35 +75,26 @@ This reduces an infinite state space into a manageable, finite state index for l
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```text
 Reinforcement-Learning/
 ├── main.py                     # Unified CLI tool (Train, Test, Benchmark)
 ├── compare_algorithms.py       # Benchmark evaluation & plot generator
+├── hyperparameter_tracker.py   # Hyperparameter sensitivity tracker & logger
+├── app.py                      # Interactive Streamlit web app
 ├── Untrained.py                # Baseline random agent runner
+├── Dockerfile                  # Container build instructions
 ├── requirements.txt            # Project dependencies
 ├── plots/
-│   └── algorithm_comparison.png# Generated benchmark visual comparison chart
+│   ├── algorithm_comparison.png# Benchmark visual comparison chart
+│   └── hyperparameter_sensitivity.png # Hyperparameter sensitivity plot
+├── experiments/                # Generated hyperparameter CSV/JSON logs
 ├── deep_q_learning/            # Deep Q-Network (DQN) implementation
-│   ├── lunar_lander_dqn.py     # DQN training pipeline with Replay Buffer
-│   ├── testing_dqn.py          # Trained DQN agent visualization
-│   └── models/                 # Saved DQN weights (.pkl)
 ├── qlearning/                  # Tabular Q-Learning implementation
-│   ├── lunar_lander_qlearning.py
-│   ├── state_discretizer.py    # Continuous-to-discrete state binning module
-│   └── testing_model.py
 ├── sarsa/                      # SARSA implementation
-│   ├── lunar_lander_sarsa.py
-│   ├── state_discretizer_sarsa.py
-│   └── testing_model.py
 ├── monte_carlo/                # Monte Carlo Control implementation
-│   ├── lunar_lander_monte_carlo.py
-│   ├── state_discretizer_mc.py
-│   └── testing_file.py
 ├── cross_entropy/              # Cross-Entropy Method (CEM) implementation
-│   ├── cem_lunar_lander.py     # Evolutionary weight space sampling
-│   └── testing_cem.py
 └── .github/
     └── workflows/
         └── ci.yml              # GitHub Actions automated CI verification
@@ -111,7 +102,7 @@ Reinforcement-Learning/
 
 ---
 
-## 🛠️ Installation & Getting Started
+## Installation & Getting Started
 
 ### 1. Prerequisites & Installation
 Clone the repository and install the dependencies:
@@ -123,13 +114,13 @@ pip install -r requirements.txt
 
 ### 2. Using the Unified CLI (`main.py`)
 
-#### 🔹 Run Benchmark Comparison Report
+#### Run Benchmark Comparison Report
 ```bash
 python main.py --compare
 ```
 *Generates the ASCII benchmark table in the terminal and updates `plots/algorithm_comparison.png`.*
 
-#### 🔹 Test / Visualize a Trained Agent
+#### Test / Visualize a Trained Agent
 To watch the pre-trained **DQN** agent land in a live rendering window:
 ```bash
 python main.py --algo dqn --mode test
@@ -140,7 +131,7 @@ python main.py --algo qlearning --mode test
 python main.py --algo sarsa --mode test
 ```
 
-#### 🔹 Train an Agent from Scratch
+#### Train an Agent from Scratch
 To train the **DQN** agent:
 ```bash
 python main.py --algo dqn --mode train
@@ -148,7 +139,7 @@ python main.py --algo dqn --mode train
 
 ---
 
-## 🌐 Interactive Web Demo (Streamlit)
+## Interactive Web Demo (Streamlit)
 Launch the interactive web dashboard to test agents, adjust environment physics (gravity, wind, turbulence), and compare model metrics in your browser:
 ```bash
 streamlit run app.py
@@ -157,7 +148,7 @@ streamlit run app.py
 
 ---
 
-## 🧪 Hyperparameter Experiment Tracker
+## Hyperparameter Experiment Tracker
 Run standard hyperparameter sensitivity grid trials across learning rates ($\alpha$), discount factors ($\gamma$), and buffer sizes ($N$):
 ```bash
 python hyperparameter_tracker.py
@@ -166,7 +157,7 @@ python hyperparameter_tracker.py
 
 ---
 
-## 🐳 Docker Deployment
+## Docker Deployment
 Containerize and execute the full environment without installing local dependencies or SWIG build tools:
 
 ```bash
@@ -179,5 +170,5 @@ docker run --rm lunar-lander-rl
 
 ---
 
-## 📄 License
+## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
